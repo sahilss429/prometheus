@@ -1,0 +1,2 @@
+---
+datadog_agent::apm_enabled: true

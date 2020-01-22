@@ -1,0 +1,4 @@
+---
+debian::puppetagent_version: '6.7.0-1xenial'
+trace_connector::enabled: true
+trace_connector::env: "dev"

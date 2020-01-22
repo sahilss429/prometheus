@@ -1,20 +1,51 @@
 ---
-- name: Download nomad binary from hashicorp website
+- name: Download prometheus source from downloads website
   get_url:
-    url: https://releases.hashicorp.com/nomad/0.10.2/nomad_0.10.2_linux_amd64.zip
-    dest: /tmp/
+    url: https://github.com/prometheus/prometheus/releases/download/v2.15.2/prometheus-2.15.2.linux-amd64.tar.gz
+    dest: /opt/
     mode: '0755'
 
-- name: unarchive the binary
+- name: Download prometheus node_exporter from downloads website
+  get_url:
+    url: https://github.com/prometheus/node_exporter/releases/download/v0.18.1/node_exporter-0.18.1.linux-amd64.tar.gz
+    dest: /opt/
+    mode: '0755'
+
+- name: unarchive the prometheus source
   unarchive:
-    src: /tmp/nomad_0.10.2_linux_amd64.zip
-    dest: /usr/local/bin
+    src: /opt/prometheus-2.15.2.linux-amd64.tar.gz
+    dest: /opt/
     remote_src: yes
     mode: '0755'
 
-- name: writing systemd file for nomad
+- name: unarchive the node_exporter binary
+  unarchive:
+    src: /opt/node_exporter-0.18.1.linux-amd64.tar.gz
+    dest: /opt/
+    remote_src: yes
+    mode: '0755'
+
+- name: Add the user prometheus
+  user:
+    name: prometheus
+    shell: /bin/false
+    home: /var/lib/prometheus
+    system: true
+
+- name: Add the user node_exporter
+  user:
+    name: node_exporter
+    shell: /bin/false
+    system: true
+
+- name: writing systemd file for prometheus
   copy:
-    src: nomad.service
+    src: prometheus.service
+    dest: /etc/systemd/system/
+
+- name: writing systemd file for node_exporter
+  copy:
+    src: node_exporter.service
     dest: /etc/systemd/system/
 
 - name: Create config and data directory
@@ -22,22 +53,64 @@
     path: "{{ item }}"
     state: directory
     mode: '0755'
-    owner: root
-    group: root
+    owner: prometheus
+    group: prometheus
   with_items:
-    - /etc/nomad
-    - /opt/nomad/data
+    - /etc/prometheus
+    - /var/lib/prometheus
 
-- name: Create server-config.json
+- name: copy prometheus and promtool binary to PATH
+  copy:
+    src: /opt/prometheus-2.15.2.linux-amd64/"{{ item }}"
+    dest: /usr/local/bin/
+    remote_src: yes
+    owner: prometheus
+    group: prometheus
+  with_items:
+    - prometheus
+    - promtool
+
+- name: copy node_exporter to PATH
+  copy:
+    src: /opt/node_exporter-0.18.1.linux-amd64/node_exporter
+    dest: /usr/local/bin/
+    remote_src: yes
+    owner: prometheus
+    group: prometheus
+  with_items:
+    - prometheus
+    - promtool
+
+- name: copy consoles and console_libraries to /etc/prometheus
+  copy:
+    src: /opt/prometheus-2.15.2.linux-amd64/"{{ item }}"
+    dest: /etc/prometheus
+    remote_src: yes
+    owner: prometheus
+    group: prometheus
+  with_items:
+    - consoles
+    - console_libraries
+
+- name: Create prometheus.yml
   template:
-    src: server-config.json.j2
-    dest: /etc/nomad/server-config.json
+    src: prometheus.yml.j2
+    dest: /etc/prometheus/prometheus.yml
     mode: '0640'
-    owner: root
-    group: root
+    owner: prometheus
+    group: prometheus
 
 - name: restart nomad
   service:
-    name: nomad.service
+    name: prometheus.service
     state: restarted
     daemon_reload: yes
+
+- name: restart node_exporter
+  service:
+    name: node_exporter.service
+    state: restarted
+    daemon_reload: yes
+
+- debug:
+    msg: Open {{ inventory_hostname }}:9090/graph

@@ -1,0 +1,3 @@
+---
+vault_agent::autoauth::method::approle::role_id: 62925dbf-a995-c0fa-808d-8b1aaa23821e
+vault_agent::autoauth::method::approle::secret_id: 5f34e1db-0764-fa4f-8885-124477acda61

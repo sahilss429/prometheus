@@ -1,0 +1,49 @@
+---
+- name: Download prometheus node_exporter from downloads website
+  get_url:
+    url: https://github.com/prometheus/node_exporter/releases/download/v0.18.1/node_exporter-0.18.1.linux-amd64.tar.gz
+    dest: /opt/
+    mode: '0755'
+
+- name: unarchive the node_exporter binary
+  unarchive:
+    src: /opt/node_exporter-0.18.1.linux-amd64.tar.gz
+    dest: /opt/
+    remote_src: yes
+    mode: '0755'
+
+- name: Add the user node_exporter
+  user:
+    name: node_exporter
+    shell: /bin/false
+    system: true
+
+- name: writing systemd file for node_exporter
+  copy:
+    src: node_exporter.service
+    dest: /etc/systemd/system/
+
+- name: copy node_exporter to PATH
+  copy:
+    src: /opt/node_exporter-0.18.1.linux-amd64/node_exporter
+    dest: /usr/local/bin/
+    remote_src: yes
+    owner: prometheus
+    group: prometheus
+
+- name: Create prometheus.yml
+  template:
+    src: prometheus.yml.j2
+    dest: /etc/prometheus/prometheus.yml
+    mode: '0640'
+    owner: prometheus
+    group: prometheus
+
+- name: restart node_exporter
+  service:
+    name: node_exporter.service
+    state: restarted
+    daemon_reload: yes
+
+- debug:
+    msg: Open {{ inventory_hostname }}:9090/graph

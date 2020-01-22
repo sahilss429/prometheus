@@ -1,3 +1,0 @@
----
-- import_playbook: configure_nomad-server.yml
-- import_playbook: configure_nomad-client.yml

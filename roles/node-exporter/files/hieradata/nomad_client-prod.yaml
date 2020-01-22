@@ -1,0 +1,6 @@
+---
+datadog_agent::tags:
+  - "env:production"
+trace_connector::enabled: true
+trace_connector::env: "production"
+nomad::version: '0.9.6'

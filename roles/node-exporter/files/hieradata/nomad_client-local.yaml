@@ -1,0 +1,48 @@
+---
+classes: []
+consul::datacenter: "%{::consul_dc}"
+consul::discovery_max_stale: 0
+consul::rpc_rate: 5000
+consul::version: "1.5.3"
+consul::daemon: "systemd"
+consul::enterprise: true
+consul::ipaddress: "%{::ipaddress_eth1}"
+consul::retry: "192.168.3.10"
+debian::puppetagent_version: '6.7.0-1%{::lsbdistcodename}'
+docker::version: "18.09.2"
+docker::package: "docker-ce"
+docker::ubuntu_version: "5:18.09.2~3-0~ubuntu-%{::lsbdistcodename}"
+linkerd::logLevel: ALL
+linkerd::env: "%{::env}"
+linkerd::version: "1.6.3-22ae977"
+nomad::acl: false
+nomad::bin_dir: '/usr/bin'
+nomad::certs::common_name: "nomad-client.service.consul"
+nomad::certs::alt_names:
+  - "%{::fqdn}"
+  - "%{::hostname}"
+  - "localhost"
+  - "nomad-client.service.%{::consul_dc}.consul"
+  - "client.%{::nomad_region}.nomad"
+  - "client.%{::region}.nomad"
+  - "client.%{::region}-%{::env}.nomad"
+  - "client.global.nomad"
+nomad::certs::ip_sans:
+  - "127.0.0.1"
+  - "%{::ipaddress}"
+nomad::ipaddress: "192.168.3.50"
+nomad::log_level: 'DEBUG'
+nomad::vault_integration: false
+nomad::tls::enabled: false
+nomad::version: '0.9.5'
+puppetrunner::enabled: false
+splunk::config::clientname: "%{::hostname}.%{::role}"
+splunk::hf::enabled: false
+splunk::hf::version: "7.1.0"
+splunk::uf::version: "7.1.2"
+trelliumd::enabled: true
+vault_agent::enabled: false
+vault_agent::version: "1.1.3"
+vault_agent::enterprise: true
+vault_agent::caching: true
+vault_agent::listener::tcp::tls::disable: true

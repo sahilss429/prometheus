@@ -1,4 +1,4 @@
-- name: Install and configure nomad servers with consul servers
+- name: Install and configure prometheus and grafana with consul clients
   hosts: servers
   become: true
   user: ubuntu
@@ -7,5 +7,6 @@
   vars_files:
    - group_vars/all
   roles:
-   - role: consul-server
-   - role: nomad-server
+   - role: consul-client
+   - role: prometheus
+   - role: grafana
