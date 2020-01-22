@@ -1,0 +1,17 @@
+---
+- name: Adding mesosphere key
+  command: apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv E56151BF
+
+- apt_repository:
+    repo:  deb http://repos.mesosphere.com/ubuntu xenial main
+    state: present
+
+- name: installing java version 8
+  apt:
+   name: openjdk-8-jre-headless
+   state: latest
+
+- name: Apt-get update
+  apt:
+   update_cache: yes
+

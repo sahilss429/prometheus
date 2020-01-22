@@ -1,0 +1,9 @@
+---
+- name: restricting root sshn login
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PermitRootLogin'
+    line: PermitRootLogin no
+    owner: root
+    group: root
+    mode: '0644'

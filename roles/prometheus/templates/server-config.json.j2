@@ -1,0 +1,17 @@
+{
+  "advertise":{
+    "http":"{{ inventory_hostname }}",
+    "rpc":"{{ inventory_hostname }}",
+    "serf":"{{ inventory_hostname }}"
+  },
+  "bind_addr":"0.0.0.0",
+  "data_dir":"/opt/nomad",
+  "datacenter":"dc1",
+  "log_level":"DEBUG",
+  "region":"dc1",
+  "server":{
+    "authoritative_region":"dc1",
+    "bootstrap_expect":3,
+    "enabled":true
+  }
+}

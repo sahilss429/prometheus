@@ -1,0 +1,50 @@
+---
+- name: Download consul binary from consul website
+  get_url:
+    url: https://releases.hashicorp.com/consul/1.6.2/consul_1.6.2_linux_amd64.zip
+    dest: /tmp/
+    mode: '0755'
+
+- name: unarchive the binary
+  unarchive:
+    src: /tmp/consul_1.6.2_linux_amd64.zip
+    dest: /usr/local/bin
+    remote_src: yes
+    mode: '0755'
+
+- name: Add the user consul
+  user:
+    name: consul
+    shell: /bin/false
+    home: /etc/consul.d
+    system: true
+
+- name: writing systemd file for consul
+  copy:
+    src: consul.service
+    dest: /etc/systemd/system/
+
+- name: Create consul.d directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+    owner: consul
+    group: consul
+  with_items:
+    - /etc/consul.d
+    - /opt/consul
+
+- name: Create client-config.json
+  template:
+    src: client-config.json.j2
+    dest: /etc/consul.d/client-config.json
+    mode: '0640'
+    owner: consul
+    group: consul
+
+- name: restart consul
+  service:
+    name: consul.service
+    state: restarted
+    daemon_reload: yes

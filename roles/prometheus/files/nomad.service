@@ -1,0 +1,17 @@
+[Unit]
+Description=Nomad agent
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+EnvironmentFile=-/etc/default/nomad
+EnvironmentFile=-/etc/default/vault-agent
+ExecStart=/usr/local/bin/nomad agent -config=/etc/nomad
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+KillSignal=SIGINT
+RestartSec=42s
+LimitNOFILE=131072
+
+[Install]
+WantedBy=multi-user.target

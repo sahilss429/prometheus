@@ -1,0 +1,26 @@
+{
+  "advertise_addr": "{{ inventory_hostname }}",
+  "bootstrap_expect": 3,
+  "client_addr": "0.0.0.0",
+  "datacenter": "dc1",
+  "disable_remote_exec": true,
+  "dns_config": {
+    "node_ttl": "10s",
+    "allow_stale": true,
+    "max_stale": "10s",
+    "service_ttl": {
+      "*": "10s"
+    }
+  },
+  "log_level": "INFO",
+  "ports": {
+    "dns": 8600,
+    "http": 8500,
+    "serf_lan": 8301,
+    "serf_wan": 8302,
+    "server": 8300
+  },
+  "server": true,
+    "retry_join": ["{{ leader }}"],
+  "ui": true
+}

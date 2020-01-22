@@ -1,0 +1,22 @@
+{
+  "advertise":{
+    "http":"{{ inventory_hostname }}",
+    "rpc":"{{ inventory_hostname }}",
+    "serf":"{{ inventory_hostname }}"
+  },
+  "bind_addr":"0.0.0.0",
+  "client":{
+    "enabled":true,
+    "node_class":"general",
+    "reserved":{
+      "cpu":2000,
+      "disk":4096,
+      "memory":4096,
+      "reserved_ports":"20514,25025"
+    }
+  },
+  "data_dir":"/opt/nomad",
+  "datacenter":"dc1",
+  "log_level":"DEBUG",
+  "region":"dc1"
+}
