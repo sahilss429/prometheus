@@ -1,9 +1,15 @@
 ---
+- name: check if prometheus is already downloaded and installed
+  stat:
+    path: /usr/local/bin/consul
+    register: installed
+
 - name: Download consul binary from consul website
   get_url:
     url: https://releases.hashicorp.com/consul/1.6.2/consul_1.6.2_linux_amd64.zip
     dest: /tmp/
     mode: '0755'
+  when: installed.stat.exists == false
 
 - name: unarchive the binary
   unarchive:
@@ -11,6 +17,7 @@
     dest: /usr/local/bin
     remote_src: yes
     mode: '0755'
+  when: installed.stat.exists == false
 
 - name: Add the user consul
   user:
