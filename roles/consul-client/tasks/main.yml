@@ -6,14 +6,14 @@
 
 - name: Download consul binary from consul website
   get_url:
-    url: https://releases.hashicorp.com/consul/1.6.2/consul_1.6.2_linux_amd64.zip
+    url: "https://releases.hashicorp.com/consul/{{ consul_version }}/consul_{{ consul_version }}_linux_amd64.zip"
     dest: /tmp/
     mode: '0755'
   when: installed.stat.exists == false
 
 - name: unarchive the binary
   unarchive:
-    src: /tmp/consul_1.6.2_linux_amd64.zip
+    src: "/tmp/consul_{{ consul_version }}_linux_amd64.zip"
     dest: /usr/local/bin
     remote_src: yes
     mode: '0755'

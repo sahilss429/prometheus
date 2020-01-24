@@ -13,6 +13,6 @@ scrape_configs:
       - targets:
       {% for host in groups['clients'] %}
       {% if inventory_hostname != host %}
-        - '{{ host }}:9100'
+        ['{{ host }}:9100',]
       {% endif %}
       {% endfor %}
