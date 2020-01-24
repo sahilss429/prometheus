@@ -2,7 +2,7 @@
 - name: check if node_exporter is already downloaded and installed
   stat:
     path: /usr/local/bin/node_exporter
-    register: installed
+  register: installed
 
 - name: Install prerequisites
   apt:

@@ -2,7 +2,7 @@
 - name: check if prometheus is already downloaded and installed
   stat:
     path: /usr/local/bin/prometheus
-    register: installed
+  register: installed
 
 - name: Download prometheus source from downloads website
   get_url:

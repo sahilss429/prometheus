@@ -2,7 +2,7 @@
 - name: check if prometheus is already downloaded and installed
   stat:
     path: /usr/local/bin/consul
-    register: installed
+  register: installed
 
 - name: Download consul binary from consul website
   get_url:
