@@ -1,4 +1,8 @@
 ---
+- name: check if node_exporter is already downloaded and installed
+  stat:
+    path: /usr/local/bin/node_exporter
+    register: installed
 
 - name: Install prerequisites
   apt:
@@ -9,6 +13,7 @@
 - name: Download grafana latest debian package from download website and install
   apt:
     deb: https://dl.grafana.com/oss/release/grafana_6.5.3_amd64.deb
+  when: installed.stat.exists == false
 
 - name: restart grafana service
   service:

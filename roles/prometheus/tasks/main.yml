@@ -1,16 +1,23 @@
 ---
+- name: check if prometheus is already downloaded and installed
+  stat:
+    path: /usr/local/bin/prometheus
+    register: installed
+
 - name: Download prometheus source from downloads website
   get_url:
-    url: https://github.com/prometheus/prometheus/releases/download/v2.15.2/prometheus-2.15.2.linux-amd64.tar.gz
+    url: https://github.com/prometheus/prometheus/releases/download/v"{{ prometheus_version }}"/prometheus-2.15.2.linux-amd64.tar.gz
     dest: /opt/
     mode: '0755'
+  when: installed.stat.exists == false
 
 - name: unarchive the prometheus source
   unarchive:
-    src: /opt/prometheus-2.15.2.linux-amd64.tar.gz
+    src: /opt/prometheus-"{{ prometheus_version }}".linux-amd64.tar.gz
     dest: /opt/
     remote_src: yes
     mode: '0755'
+  when: installed.stat.exists == false
 
 - name: Add the user prometheus
   user:
@@ -37,25 +44,27 @@
 
 - name: copy prometheus and promtool binary to PATH
   copy:
-    src: /opt/prometheus-2.15.2.linux-amd64/"{{ item }}"
+    src: "{{ item }}"
     dest: /usr/local/bin/
     remote_src: yes
     owner: prometheus
     group: prometheus
   with_items:
-    - prometheus
-    - promtool
+    - /opt/prometheus-"{{ prometheus_version }}".linux-amd64/prometheus
+    - /opt/prometheus-"{{ prometheus_version }}".linux-amd64/promtool
+  when: installed.stat.exists == false
 
 - name: copy consoles and console_libraries to /etc/prometheus
   copy:
-    src: /opt/prometheus-2.15.2.linux-amd64/"{{ item }}"
+    src: "{{ item }}"
     dest: /etc/prometheus
     remote_src: yes
     owner: prometheus
     group: prometheus
   with_items:
-    - consoles
-    - console_libraries
+    - /opt/prometheus-"{{ prometheus_version }}".linux-amd64/consoles
+    - /opt/prometheus-"{{ prometheus_version }}".linux-amd64/console_libraries
+  when: installed.stat.exists == false
 
 - name: Create prometheus.yml
   template:
