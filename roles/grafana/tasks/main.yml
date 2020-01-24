@@ -1,43 +1,23 @@
 ---
-- name: Download nomad binary from hashicorp website
-  get_url:
-    url: https://releases.hashicorp.com/nomad/0.10.2/nomad_0.10.2_linux_amd64.zip
-    dest: /tmp/
-    mode: '0755'
 
-- name: unarchive the nomad binary
-  unarchive:
-    src: /tmp/nomad_0.10.2_linux_amd64.zip
-    dest: /usr/local/bin
-    remote_src: yes
-    mode: '0755'
+- name: Install prerequisites
+  apt:
+    name: libfontconfig1
+    state: present
+    update_cache: yes
 
-- name: writing systemd file for nomad
-  copy:
-    src: nomad.service
-    dest: /etc/systemd/system/
+- name: Download grafana latest debian package from download website and install
+  apt:
+    deb: https://dl.grafana.com/oss/release/grafana_6.5.3_amd64.deb
 
-- name: Create config and data directory
-  file:
-    path: "{{ item }}"
-    state: directory
-    mode: '0755'
-    owner: root
-    group: root
-  with_items:
-    - /etc/nomad
-    - /opt/nomad/data
-
-- name: Create client-config.json
-  template:
-    src: client-config.json.j2
-    dest: /etc/nomad/client-config.json
-    mode: '0640'
-    owner: root
-    group: root
-
-- name: restart nomad
+- name: restart grafana service
   service:
-    name: nomad.service
+    name: grafana-server.service
     state: restarted
     daemon_reload: yes
+
+- name: Check if grafana is functioning
+  uri:
+    url: http://localhost:3000
+    method: GET
+    status_code: 200
