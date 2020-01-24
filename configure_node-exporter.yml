@@ -1,5 +1,5 @@
 - name: Install and configure node-exporter with consul clients
-  hosts: servers
+  hosts: clients
   become: true
   user: ubuntu
   gather_facts: yes
@@ -9,3 +9,14 @@
   roles:
    - role: consul-client
    - role: node-exporter
+
+- name: Update prometheus config with latest nodes
+  hosts: servers
+  become: true
+  user: ubuntu
+  gather_facts: yes
+  become_method: sudo
+  vars_files:
+    - group_vars/all
+  roles:
+    - role: prometheus
