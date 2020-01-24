@@ -45,5 +45,8 @@
     state: restarted
     daemon_reload: yes
 
-- debug:
-    msg: Open {{ inventory_hostname }}:9090/graph
+- name: Check if node_exporter is functioning
+  uri:
+    url: http://localhost:9100
+    method: GET
+    status_code: 200

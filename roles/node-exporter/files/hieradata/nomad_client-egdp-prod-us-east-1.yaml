@@ -1,3 +1,0 @@
----
-datadog_agent::apm_enabled: true
-vault_agent::autoauth::wrap_ttl::value: "30m"

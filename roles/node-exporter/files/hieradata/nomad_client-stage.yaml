@@ -1,3 +1,0 @@
----
-trace_connector::enabled: true
-trace_connector::env: "stage"

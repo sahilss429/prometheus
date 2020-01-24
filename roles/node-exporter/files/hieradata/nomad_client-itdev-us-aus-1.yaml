@@ -1,4 +1,0 @@
----
-vault_agent::autoauth::method::approle::role_id: da5fcaa8-0a22-e5cf-903b-4a8dcc34d679
-vault_agent::autoauth::method::approle::secret_id: b0cbc9f4-2717-7512-8d61-b8428d810373
-datadog_agent::apm_enabled: true

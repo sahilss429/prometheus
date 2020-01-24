@@ -5,22 +5,9 @@
     dest: /opt/
     mode: '0755'
 
-- name: Download prometheus node_exporter from downloads website
-  get_url:
-    url: https://github.com/prometheus/node_exporter/releases/download/v0.18.1/node_exporter-0.18.1.linux-amd64.tar.gz
-    dest: /opt/
-    mode: '0755'
-
 - name: unarchive the prometheus source
   unarchive:
     src: /opt/prometheus-2.15.2.linux-amd64.tar.gz
-    dest: /opt/
-    remote_src: yes
-    mode: '0755'
-
-- name: unarchive the node_exporter binary
-  unarchive:
-    src: /opt/node_exporter-0.18.1.linux-amd64.tar.gz
     dest: /opt/
     remote_src: yes
     mode: '0755'
@@ -32,20 +19,9 @@
     home: /var/lib/prometheus
     system: true
 
-- name: Add the user node_exporter
-  user:
-    name: node_exporter
-    shell: /bin/false
-    system: true
-
 - name: writing systemd file for prometheus
   copy:
     src: prometheus.service
-    dest: /etc/systemd/system/
-
-- name: writing systemd file for node_exporter
-  copy:
-    src: node_exporter.service
     dest: /etc/systemd/system/
 
 - name: Create config and data directory
@@ -62,17 +38,6 @@
 - name: copy prometheus and promtool binary to PATH
   copy:
     src: /opt/prometheus-2.15.2.linux-amd64/"{{ item }}"
-    dest: /usr/local/bin/
-    remote_src: yes
-    owner: prometheus
-    group: prometheus
-  with_items:
-    - prometheus
-    - promtool
-
-- name: copy node_exporter to PATH
-  copy:
-    src: /opt/node_exporter-0.18.1.linux-amd64/node_exporter
     dest: /usr/local/bin/
     remote_src: yes
     owner: prometheus
@@ -100,17 +65,14 @@
     owner: prometheus
     group: prometheus
 
-- name: restart nomad
+- name: restart prometheus service
   service:
     name: prometheus.service
     state: restarted
     daemon_reload: yes
 
-- name: restart node_exporter
-  service:
-    name: node_exporter.service
-    state: restarted
-    daemon_reload: yes
-
-- debug:
-    msg: Open {{ inventory_hostname }}:9090/graph
+- name: Check if prometheus is functioning
+  uri:
+    url: http://localhost:9090
+    method: GET
+    status_code: 200
